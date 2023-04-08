@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arbitrary FormData Receiver</title>
+    <script>
+      // Get the current host and protocol of the page
+      const host = window.location.host;
+      const protocol = window.location.protocol.replace("http", "ws");
+
+      // Create the WebSocket URL by combining the host, protocol, and relative path
+      const websocketURL = `${protocol}//${host}/ws`; // Replace '/ws' with your desired relative path
+
+      // Establish WebSocket connection
+      const socket = new WebSocket(websocketURL);
+
+      // Event handler for when the WebSocket connection is opened
+      socket.addEventListener("open", (event) => {
+        console.log("WebSocket connection opened:", event);
+      });
+
+      // Event handler for when a message is received from the server
+      socket.addEventListener("message", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          // Render the timestamped JSON form data as needed
+          console.log("Received data:", data);
+          // Render data to HTML or perform other actions as needed
+        } catch (error) {
+          console.error("Error parsing message:", event.data);
+        }
+      });
+
+      // Event handler for when the WebSocket connection is closed
+      socket.addEventListener("close", (event) => {
+        console.log("WebSocket connection closed:", event);
+      });
+
+      // Event handler for when an error occurs with the WebSocket connection
+      socket.addEventListener("error", (event) => {
+        console.error("WebSocket error:", event);
+      });
+    </script>
+  </head>
+  <body>
+    <!-- HTML body content goes here -->
+  </body>
+</html>
