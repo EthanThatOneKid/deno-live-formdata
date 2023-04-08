@@ -2,7 +2,10 @@ import { serve, serveFile } from "./deps.ts";
 
 const sockets = new Set<WebSocket>();
 
-serve(handle);
+serve(async (request) => {
+  const response = await handle(request);
+  return makeCORSResponse(response);
+});
 
 async function handle(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -94,4 +97,11 @@ function handleWS(request: Request): Response {
 
 function makePayload(html: string): string {
   return JSON.stringify({ html });
+}
+
+function makeCORSResponse(response: Response): Response {
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  return response;
 }
