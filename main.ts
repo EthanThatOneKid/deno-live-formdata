@@ -2,10 +2,7 @@ import { serve, serveFile } from "./deps.ts";
 
 const sockets = new Set<WebSocket>();
 
-serve(async (request) => {
-  const response = await handle(request);
-  return makeCORSResponse(response);
-});
+serve(handle);
 
 async function handle(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -40,7 +37,13 @@ async function handleIndex(request: Request): Promise<Response> {
       for (const socket of sockets) {
         socket.send(makePayload(unsafeHTML));
       }
-      return new Response("Successfully submitted form data");
+
+      return new Response("Successfully submitted form data", {
+        headers: new Headers([
+          ["content-type", "text/plain"],
+          ["access-control-allow-origin", "*"],
+        ]),
+      });
     }
 
     default: {
@@ -97,11 +100,4 @@ function handleWS(request: Request): Response {
 
 function makePayload(html: string): string {
   return JSON.stringify({ html });
-}
-
-function makeCORSResponse(response: Response): Response {
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST");
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
-  return response;
 }
