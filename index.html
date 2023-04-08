@@ -1,7 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Arbitrary FormData Receiver</title>
+    <title>FormData Demo</title>
+
+    <style>
+      section {
+        outline: 5px dotted #000;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>FormData demo</h1>
+
+    <code>Not connected</code>
+
+    <main>
+      <h2>Messages:</h2>
+
+      <div id="messages"></div>
+    </main>
+
     <script>
       // Get the current host and protocol of the page
       const host = window.location.host;
@@ -16,15 +35,19 @@
       // Event handler for when the WebSocket connection is opened
       socket.addEventListener("open", (event) => {
         console.log("WebSocket connection opened:", event);
+
+        // Update code element to show connection status.
+        setConnected();
       });
 
       // Event handler for when a message is received from the server
       socket.addEventListener("message", (event) => {
         try {
           const data = JSON.parse(event.data);
-          // Render the timestamped JSON form data as needed
-          console.log("Received data:", data);
-          // Render data to HTML or perform other actions as needed
+          if (typeof data.html === "string") {
+            // Render data to HTML or perform other actions as needed
+            addSection(data.html);
+          }
         } catch (error) {
           console.error("Error parsing message:", event.data);
         }
@@ -39,9 +62,23 @@
       socket.addEventListener("error", (event) => {
         console.error("WebSocket error:", event);
       });
+
+      // Adds a new section on websocket message.
+      function addSection(html) {
+        try {
+          const messages = document.querySelector("#messages");
+          const section = document.createElement("section");
+          section.innerHTML = html;
+          messages.appendChild(section);
+        } catch (err) {
+          console.log({ err });
+        }
+      }
+
+      // Update code element to show connection status.
+      function setConnected(status) {
+        document.querySelector("code").textContent = "Connected";
+      }
     </script>
-  </head>
-  <body>
-    <!-- HTML body content goes here -->
   </body>
 </html>
