@@ -37,7 +37,13 @@ async function handleIndex(request: Request): Promise<Response> {
       for (const socket of sockets) {
         socket.send(makePayload(unsafeHTML));
       }
-      return new Response("Successfully submitted form data");
+
+      return new Response("Successfully submitted form data", {
+        headers: new Headers([
+          ["content-type", "text/plain"],
+          ["access-control-allow-origin", "*"],
+        ]),
+      });
     }
 
     default: {
