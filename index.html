@@ -9,6 +9,11 @@
         margin: 1rem 0;
       }
     </style>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css"
+    />
   </head>
   <body>
     <h1>FormData demo</h1>
@@ -19,6 +24,8 @@
       <h2>Messages:</h2>
 
       <div id="messages"></div>
+
+      <button id="clear">Clear</button>
     </main>
 
     <script>
@@ -35,6 +42,9 @@
       // Event handler for when the WebSocket connection is opened
       socket.addEventListener("open", (event) => {
         console.log("WebSocket connection opened:", event);
+
+        document.querySelector("#messages").innerHTML =
+          localStorage.getItem("messages") || "";
 
         // Update code element to show connection status.
         setConnected();
@@ -69,7 +79,8 @@
           const messages = document.querySelector("#messages");
           const section = document.createElement("section");
           section.innerHTML = html;
-          messages.appendChild(section);
+          messages.prepend(section);
+          localStorage.setItem("messages", messages.innerHTML);
         } catch (err) {
           console.log({ err });
         }
@@ -79,6 +90,11 @@
       function setConnected(status) {
         document.querySelector("code").textContent = "Connected";
       }
+
+      document.querySelector("#clear").addEventListener("click", () => {
+        localStorage.removeItem("messages");
+        document.querySelector("#messages").innerHTML = "";
+      });
     </script>
   </body>
 </html>
